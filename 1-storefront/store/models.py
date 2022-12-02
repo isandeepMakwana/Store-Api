@@ -1,8 +1,15 @@
 from django.db import models
 
+class Promotion(models.Model):
+    description = models.CharField(max_length = 255);
+    discount = models.FloatField()
+
+
 
 class Collection(models.Model):
     title = models.CharField(max_length=255)
+    #circular dependecy
+    feature_product = models.ForeignKey('Product',on_delete=models.SET_NULL, null=True , related_name='+')
 
 
 class Product(models.Model):
@@ -15,6 +22,9 @@ class Product(models.Model):
 
     # One To many relation (Collection -<have> product)
     collection = models.ForeignKey(Collection, on_delete=models.PROTECT)
+    #ManyToMany
+    promotion=models.ManyToManyField(Promotion)
+    # promotion=models.ManyToManyField(Promotion,related_name='products')
 
 class Address(models.Model):
     street = models.CharField(max_length=255,null=True,default="s")
