@@ -1,15 +1,17 @@
 from django.db import models
 
-class Promotion(models.Model):
-    description = models.CharField(max_length = 255);
-    discount = models.FloatField()
 
+class Promotion(models.Model):
+    description = models.CharField(max_length=255)
+    discount = models.FloatField()
 
 
 class Collection(models.Model):
     title = models.CharField(max_length=255)
-    #circular dependecy
-    feature_product = models.ForeignKey('Product',on_delete=models.SET_NULL, null=True , related_name='+')
+    # circular dependecy
+    featured_product = models.ForeignKey(
+        "Product", on_delete=models.SET_NULL, null=True, related_name="+"
+    )
 
 
 class Product(models.Model):
@@ -22,20 +24,10 @@ class Product(models.Model):
 
     # One To many relation (Collection -<have> product)
     collection = models.ForeignKey(Collection, on_delete=models.PROTECT)
-    #ManyToMany
-    promotion=models.ManyToManyField(Promotion)
+    # ManyToMany
+    promotion = models.ManyToManyField(Promotion)
     # promotion=models.ManyToManyField(Promotion,related_name='products')
 
-class Address(models.Model):
-    street = models.CharField(max_length=255,null=True,default="s")
-    city = models.CharField(max_length=255,null=True,default="c")
-    # # One_To_One relationship
-    # customer = models.OneToOneField(Customer, on_delete=models.CASCADE , primary_key=True)
-    # # django automatically provide the revers-relationship (django create a address field in Customer table)
-
-    # ------------------------------------------------------
-    # One_To_Many relattionship
-    # customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
 
 class Customer(models.Model):
     MEMBERSHIP_BRONZE = "B"
@@ -54,7 +46,6 @@ class Customer(models.Model):
     membership = models.CharField(
         max_length=1, choices=MEMBERSHIP_CHOICES, default=MEMBERSHIP_BRONZE
     )
-    address = models.ForeignKey(Address, on_delete=models.CASCADE)
 
 
 class Orders(models.Model):
@@ -70,10 +61,20 @@ class Orders(models.Model):
 class OrderItem(models.Model):
     order = models.ForeignKey(Orders, on_delete=models.PROTECT)
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
-    quantity = models.PositiveIntegerField()
+    quantity = models.PositiveSmallIntegerField()
     unit_price = models.DecimalField(max_digits=6, decimal_places=0)
 
 
+class Address(models.Model):
+    street = models.CharField(max_length=255, null=True, default="s")
+    city = models.CharField(max_length=255, null=True, default="c")
+    # # One_To_One relationship
+    # customer = models.OneToOneField(Customer, on_delete=models.CASCADE , primary_key=True)
+    # # django automatically provide the revers-relationship (django create a address field in Customer table)
+
+    # ------------------------------------------------------
+    # One_To_Many relattionship
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
 
 
 class Cart(models.Model):
