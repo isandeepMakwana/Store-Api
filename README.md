@@ -2,29 +2,36 @@
 
 # 1-storefront
 
+## Add toolbar in Django
 > Django debug toolbar
 
-`python -m pip install django-debug-toolbar`
+```bash
+python -m pip install django-debug-toolbar
+```
 
 [https://django-debug-toolbar.readthedocs.io/en/latest/installation.html](https://django-debug-toolbar.readthedocs.io/en/latest/installation.html)
 
+---
 # 2- Models
 
 > Building an e-commerce data model
 - relation btw products with collection
-![products with collection](docs/imgs/Sandeep%20Makwana%20-%20Screen%20Shot%202022-11-29%20at%207.51.14%20PM.png)
+![products with collection](docs/imgs/Sandeep%20Makwana%20-%20Screen%20Shot%202022-11-29%20at%207.51.14%20PM.png)<br>
 
 - relation btw products ,cart,cartitem
 
-![products ,cart,cartitem](docs/imgs/Sandeep%20Makwana%20-%20Screen%20Shot%202022-11-29%20at%207.51.24%20PM.png)
+![products ,cart,cartitem](docs/imgs/Sandeep%20Makwana%20-%20Screen%20Shot%202022-11-29%20at%207.51.24%20PM.png)<br>
 
 - relation btw products , orders, orderItem ,customer
-![products , orders, orderItem ,customer](docs/imgs/Sandeep%20Makwana%20-%20Screen%20Shot%202022-11-29%20at%207.51.31%20PM.png)
+![products , orders, orderItem ,customer](docs/imgs/Sandeep%20Makwana%20-%20Screen%20Shot%202022-11-29%20at%207.51.31%20PM.png)<br>
 - relation btw products and tag
-![](docs/imgs/Sandeep%20Makwana%20-%20Screen%20Shot%202022-11-29%20at%207.51.37%20PM.png)
+![](docs/imgs/Sandeep%20Makwana%20-%20Screen%20Shot%202022-11-29%20at%207.51.37%20PM.png)<br>
+
+<br>
+<br>
 
 > Organizing Models in Apps
->> ![](docs/imgs/Sandeep%20Makwana%20-%20Screen%20Shot%202022-11-29%20at%208.02.14%20PM.png)
+>> ![](docs/imgs/Sandeep%20Makwana%20-%20Screen%20Shot%202022-11-29%20at%208.02.14%20PM.png)<br>
 
 > Let's create a 2 django
 app
@@ -37,7 +44,8 @@ python manage.py startapp tags
 
 > Creating Models
 [https://docs.djangoproject.com/en/4.1/ref/models/fields/](https://docs.djangoproject.com/en/4.1/ref/models/fields/)
----
+<br>
+
 > - one_to_one
 > - one_to_many
 > - Circular dependency
@@ -47,26 +55,23 @@ store-[model.py](1-storefront/store/models.py)
 
 
 > - Generic Relationships
+>
+<mark>pending<mark>
 
-Model file for store app
-store-[model.py](1-storefront/tags/models.py)
+Model file for tags app
+tags-[model.py](1-storefront/tags/models.py)
 
-
+---
 
 # DataBase
-
-> create migrations
-> running migration
-> reversiong mirgartions
-> pupulation the database
-
-
+`create migrations,running migration,reversiong mirgartions
+,pupulation the database`
 
 > - create mirgration
 ```bash
 python manage.py makemigrations
 ```
-all migration created on migration folder
+all migrations created on migration folder -->
 inner your store-app folder
 
 >> create migration for spacific `app`
@@ -85,7 +90,7 @@ imported notes:
 python manage.py migrate
 ```
 
-> sqlmigrate
+> <mark> sqlmigrate <mark>
 
 - if you want to see the sql queries of your migration on the time of creation
 
@@ -109,7 +114,7 @@ python manage.py sqlmigrate <app_name> <spacific migration (0003)>
 - change table name in database or much more
 [django model metadata](https://docs.djangoproject.com/en/4.1/ref/models/options/)
 
-to change table name we need to go
+- to change table name we need to go
 `models.py`
 ```python
 # add
@@ -137,7 +142,8 @@ python manage.py migration store(app-name) 0003(2nd-last-file-number)
 ```
 
 <mark>but there as an issue<mark>
-we delete only migration file but the code change is still remaining that why we `use gitbash for this `
+
+we deleted only migration file but the code change is still remaining that's why we `use git for this `
 
 <mark> use git reset for reverting migrations <mark>
 ```gitbash
@@ -146,6 +152,8 @@ git reset --hard HEAD~1
 
 UTC
 > Running Custom SQL
+
+
 ![custom-sql-1](docs/imgs/custom_sql-1.png)
 
 ![custom-sql-2](docs/imgs/custom-sql-2.png)
@@ -156,68 +164,10 @@ UTC
 
 
 
-> Generating Dummy Data
+> Generating Dummy Data<br>
 [www.mockaroo.com/](https://www.mockaroo.com/)
 
 
 ---
 
 # Django ORM
-
-===
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-> What is docker
-
-A platform for biulding running and shipping application and consistently build,run and ship application
-
-> Container
-
-- An isolated environment for running an application
-
-- Allow running multiple app in isolation
-Are lightweight
-Use os of the host
-start queickly
-need less hardware resource
-
-`let's geate project and dockerzie`
-
-create Folder :
-```bash
- mkdir hello-docker
-```
-
-> Inside of this folder and create one file
- ```javascript
-  -->file_name.js<--
-  console.log("hello World");
-  ```
-
-
-> Instruction To Deploy Application
-
-- start with os
-- install node
-- copy app files
-- run node file-name.js (main_file)
-
-go-back to hello-docker folder and create one file <mark>Dockerfile<mark>
-
-	-->dockerfile<---
