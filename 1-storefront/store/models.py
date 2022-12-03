@@ -47,6 +47,9 @@ class Customer(models.Model):
         max_length=1, choices=MEMBERSHIP_CHOICES, default=MEMBERSHIP_BRONZE
     )
 
+    class Meta:
+        db_table='store_new_customer'
+
 
 class Orders(models.Model):
     PAYMENT_STATUS_CHOICE = [("P", "Pending"), ("C", "Complete"), ("F", "Failed")]
