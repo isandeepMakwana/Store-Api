@@ -38,45 +38,131 @@ python manage.py startapp tags
 > Creating Models
 [https://docs.djangoproject.com/en/4.1/ref/models/fields/](https://docs.djangoproject.com/en/4.1/ref/models/fields/)
 ---
+> - one_to_one
+> - one_to_many
+> - Circular dependency
 
-```python
-from django.db import models
-
-# Create your models here.
-class Product(models.Model):
-    title = models.CharField(max_length=255)
-    description = models.TextField()
-    # 9999.99
-    price = models.DecimalField(max_digits=6, decimal_places=2)
-    inventory = models.IntegerField()
-    last_update = models.DateTimeField(auto_now=True)
+Model file for store app
+store-[model.py](1-storefront/store/models.py)
 
 
-class Customer(models.Model):
-    MEMBERSHIP_BRONZE='B'
-    MEMBERSHIP_SILVER='S'
-    MEMBERSHIP_GOLD='G'
-    MEMBERSHIP_CHOICES=[
-        (MEMBERSHIP_BRONZE,'Bronze'),
-        (MEMBERSHIP_SILVER,'Sliver'),
-        (MEMBERSHIP_GOLD,'Gold')
-        ]
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
-    email = models.EmailField(unique=True)
-    phone = models.IntegerField(max_length=10)
-    birth_date = models.DateField(null=True)
-    membership = models.CharField(max_length=1 , choices=MEMBERSHIP_CHOICES , default=MEMBERSHIP_BRONZE)
+> - Generic Relationships
 
-class Orders(models.Model):
-    PAYMENT_STATUS_CHOICE = [("P", "Pending"), ("C", "Complete"), ("F", "Failed")]
-    placed_at = models.DateTimeField(auto_now_add=True)
-    payment_status = models.CharField(
-        max_length=1, choices=PAYMENT_STATUS_CHOICE, default="P"
-    )
+Model file for store app
+store-[model.py](1-storefront/tags/models.py)
 
+
+
+# DataBase
+
+> create migrations
+> running migration
+> reversiong mirgartions
+> pupulation the database
+
+
+
+> - create mirgration
+```bash
+python manage.py makemigrations
+```
+all migration created on migration folder
+inner your store-app folder
+
+>> create migration for spacific `app`
+```bash
+python manage.py makemigrations <app-name(store)>
 ```
 
+imported notes:
+![makemigration-error-in-module-1](docs/imgs/makemigration-1.png)
+![makemigration-error-in-module-2](docs/imgs/makemigration-2.png)
+
+
+> - Running migrations
+
+```bash
+python manage.py migrate
+```
+
+> sqlmigrate
+
+- if you want to see the sql queries of your migration on the time of creation
+
+```bash
+python manage.py sqlmigrate
+```
+
+```bash
+python manage.py sqlmigrate <app_name>
+```
+
+
+```bash
+python manage.py sqlmigrate <app_name> <spacific migration (0003)>
+```
+![sqlmigrate](docs/imgs/sqlmigrate.png)
+
+
+> customizing database schema
+
+- change table name in database or much more
+[django model metadata](https://docs.djangoproject.com/en/4.1/ref/models/options/)
+
+to change table name we need to go
+`models.py`
+```python
+# add
+class Meta:
+  db_table='store_new_customer'
+
+```
+or you can add much more
+```python
+# add
+class Meta:
+  db_table='store_new_customer'
+  indexes =[
+    models.Index(fields=['last_name','first_name'])
+  ]
+```
+
+
+> - Reverting Migrations
+
+find migrations folder --> and inside of them delete last migration .py(like last file is 0004_smedfdfa.py) file
+And run
+```bash
+python manage.py migration store(app-name) 0003(2nd-last-file-number)
+```
+
+<mark>but there as an issue<mark>
+we delete only migration file but the code change is still remaining that why we `use gitbash for this `
+
+<mark> use git reset for reverting migrations <mark>
+```gitbash
+git reset --hard HEAD~1
+```
+
+UTC
+> Running Custom SQL
+![custom-sql-1](docs/imgs/custom_sql-1.png)
+
+![custom-sql-2](docs/imgs/custom-sql-2.png)
+
+![custom-sql-3](docs/imgs/custom-sql-3.png)
+
+![custom-sql-4](docs/imgs/custom-sql-4.png)
+
+
+
+> Generating Dummy Data
+[www.mockaroo.com/](https://www.mockaroo.com/)
+
+
+---
+
+# Django ORM
 
 ===
 
