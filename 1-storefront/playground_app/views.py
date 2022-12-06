@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Q, F
 from store.models import Product
 
 
@@ -44,19 +45,32 @@ def say_hello(request):
     # queryset = Product.objects.filter(collection_id=1)
     # queryset = Product.objects.filter(collection__id__range=(1, 3))
     # queryset = Product.objects.filter(title__icontains="coffee") # it check case incase sensitive
+    # # queryset = Product.objects.filter(title__icontains="-coffee")
     # queryset = Product.objects.filter(last_update__year=2021)
-    queryset = Product.objects.filter(description__isnull=True)
+    # queryset = Product.objects.filter(description__isnull=True)
 
     # -------
-    
 
-    #error
+    # complex lookups Using Q objects
+
+    # inventory < 10 AND price <20
+
+    # queryset = Product.objects.filter(inventory__lt=10, unit_price__lt=20)
+    # or
+    # queryset = Product.objects.filter(inventory__lt=10).filter(unit_price__lt=20)
+
+    # return render(request, "hello.html", {"name": queryset})
+
+    # inventory < 10 OR price <20
+    # queryset = Product.objects.filter(Q(inventory__lt=10) | Q(unit_price__lt=20))
+    # queryset = Product.objects.filter(Q(inventory__lt=10) & ~Q(unit_price__lt=20))
+
+    # ------
+    # Referencing Fields using F Objects
 
     return render(request, "hello.html", {"name": queryset})
 
     # --------------------------------------------
-    # Complex lookups Using Q Objects
-
 
 
 # def say_hello(request):
