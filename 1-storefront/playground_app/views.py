@@ -68,7 +68,34 @@ def say_hello(request):
     # ------
     # Referencing Fields using F Objects
 
-    return render(request, "hello.html", {"name": queryset})
+    # Products : inventory = price
+    # queryset = Product.objects.filter(inventory="unit_price") #error
+    # queryset = Product.objects.filter(inventory=F("unit_price"))
+    # queryset = Product.objects.filter(~Q(inventory=F("collection__id")))
+
+    # -----------
+    # sorting
+
+    # queryset = Product.objects.order_by("title")  # title ASC
+    # queryset = Product.objects.order_by("-title")  # title DESC
+    # queryset = Product.objects.order_by("unit_price", "-title")
+    # queryset = Product.objects.order_by("unit_price", "-title").reverse()
+    # queryset = Product.objects.filter(collection_id=1).order_by("unit_price")
+
+    # product = Product.objects.order_by("unit_price")[0]  # return product
+    # # or
+    # product = Product.objects.latest("unit_price")  # without sort it return product
+
+    # -------------
+
+    # Lilmiting Results and offset
+
+    # 0,1,2,3,4
+    queryset = Product.objects.all()[:5]
+    # 5,6,7,8,9
+    queryset = Product.objects.all()[5:10]
+
+    return render(request, "hello.html", {"name": list(queryset)})
 
     # --------------------------------------------
 
