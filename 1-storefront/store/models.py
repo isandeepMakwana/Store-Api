@@ -16,16 +16,17 @@ class Collection(models.Model):
 
 class Product(models.Model):
     title = models.CharField(max_length=255)
+    slug = models.SlugField()
     description = models.TextField()
     # 9999.99
-    price = models.DecimalField(max_digits=6, decimal_places=2)
+    unit_price = models.DecimalField(max_digits=6, decimal_places=2)
     inventory = models.IntegerField()
     last_update = models.DateTimeField(auto_now=True)
 
     # One To many relation (Collection -<have> product)
     collection = models.ForeignKey(Collection, on_delete=models.PROTECT)
     # ManyToMany
-    promotion = models.ManyToManyField(Promotion)
+    promotions = models.ManyToManyField(Promotion)
     # promotion=models.ManyToManyField(Promotion,related_name='products')
 
 
@@ -41,39 +42,40 @@ class Customer(models.Model):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
-    phone = models.IntegerField()
+    phone = models.CharField(max_length=255)
     birth_date = models.DateField(null=True)
     membership = models.CharField(
         max_length=1, choices=MEMBERSHIP_CHOICES, default=MEMBERSHIP_BRONZE
     )
 
-    class Meta:
-        db_table='store_new_customer'
-    #     indexes =[
-    # models.Index(fields=['last_name','first_name'])
-    #    ]
+    # class Meta:
+    #     db_table = "store_new_customer"
+
+    # #     indexes =[
+    # # models.Index(fields=['last_name','first_name'])
+    # #    ]
 
 
-class Orders(models.Model):
-    PAYMENT_STATUS_CHOICE = [("P", "Pending"), ("C", "Complete"), ("F", "Failed")]
+class Order(models.Model):
+    PAYMENT_STATUS_CHOICES = [("P", "Pending"), ("C", "Complete"), ("F", "Failed")]
     placed_at = models.DateTimeField(auto_now_add=True)
     payment_status = models.CharField(
-        max_length=1, choices=PAYMENT_STATUS_CHOICE, default="P"
+        max_length=1, choices=PAYMENT_STATUS_CHOICES, default="P"
     )
     # one_to_many relationship
     customer = models.ForeignKey(Customer, on_delete=models.PROTECT)
 
 
 class OrderItem(models.Model):
-    order = models.ForeignKey(Orders, on_delete=models.PROTECT)
+    order = models.ForeignKey(Order, on_delete=models.PROTECT)
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
     quantity = models.PositiveSmallIntegerField()
     unit_price = models.DecimalField(max_digits=6, decimal_places=0)
 
 
 class Address(models.Model):
-    street = models.CharField(max_length=255, null=True, default="s")
-    city = models.CharField(max_length=255, null=True, default="c")
+    street = models.CharField(max_length=255)
+    city = models.CharField(max_length=255)
     # # One_To_One relationship
     # customer = models.OneToOneField(Customer, on_delete=models.CASCADE , primary_key=True)
     # # django automatically provide the revers-relationship (django create a address field in Customer table)

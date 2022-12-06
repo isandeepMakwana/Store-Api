@@ -1,9 +1,20 @@
 <html>
   <body>
+    <!-- if else -->
     {% if name %}
-    <h1>Hello {{ name }}</h1>
+    <h1>Hello {{ name.title }}</h1>
     {% else %}
     <h1>hello world</h1>
     {% endif %}
+    <!-- for loop  -->
+
+    <hr />
+
+    {% for p in name %}
+    <p>{{p.id}} . {{p.title}}</p>
+    {% endfor %}
+    <!-- objects -->
+    <hr />
+    <h1>{{name}}</h1>
   </body>
 </html>
