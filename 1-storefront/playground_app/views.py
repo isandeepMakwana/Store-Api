@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q, F
-from store.models import Product
+from store.models import Product, OrderItem, Order
 
 
 def say_hello(request):
@@ -91,11 +91,161 @@ def say_hello(request):
     # Lilmiting Results and offset
 
     # 0,1,2,3,4
-    queryset = Product.objects.all()[:5]
-    # 5,6,7,8,9
-    queryset = Product.objects.all()[5:10]
+    # queryset = Product.objects.all()[:5]
+    # # 5,6,7,8,9
+    # queryset = Product.objects.all()[5:10]
 
-    return render(request, "hello.html", {"name": list(queryset)})
+    # ---------------------------
+
+    # Selecting Fields to Query
+
+    # queryset = Product.objects.values("id", "title")  # return dict objects
+    # queryset = Product.objects.values("id", "title", "collection__title")
+    """
+    SELECT "store_product"."id",
+       "store_product"."title",
+       "store_collection"."title"
+    FROM "store_product"
+    INNER JOIN "store_collection"
+        ON ("store_product"."collection_id" = "store_collection"."id")
+    """
+    # queryset = Product.objects.values_list(
+    #     "id", "title", "collection__title"
+    # )  # return tuple objects
+    # # ------------------------
+    # distinct
+
+    # queryset = OrderItem.objects.values("product_id").distinct()
+
+    # # in or nested query
+    # queryset = Product.objects.filter(
+    #     id__in=OrderItem.objects.values("product_id").distinct()
+    # ).order_by("title")
+
+    # -------------------------
+    # deferring Fields
+    # not remmended method
+    # queryset = Product.objects.only("id", "title")  # drow back if try to get
+    """
+    product.unit_price
+    then yee 1000 spreate queries karta hai like this
+
+    SELECT "store_product"."id",
+       "store_product"."title"
+    FROM "store_product"
+
+    SELECT "store_product"."id",
+           "store_product"."unit_price"
+    FROM "store_product"
+    WHERE "store_product"."id" = 1
+    LIMIT 21
+    then 1000 more querys for id 2 to 1000
+    """
+
+    # -------------
+
+    # queryset = Product.objects.defer("description")
+    """isme only descripition load nhi hota baki sub hota hai
+    SELECT "store_product"."id",
+       "store_product"."title",
+       "store_product"."slug",
+       "store_product"."unit_price",
+       "store_product"."inventory",
+       "store_product"."last_update",
+       "store_product"."collection_id"
+    FROM "store_product"
+    """
+
+    # ---------------------------
+
+    # Selecting Related Objects
+
+    # select_releted(1) “follows” foreign-key relationships, selecting additional related-object data when it executes its query
+    # prefetch_related(n) does a separate lookup for each relationship and does the “joining” in Python.
+
+    # One uses select_related when the object that you're going to be selecting is a single object, so OneToOneField or a ForeignKey. You use prefetch_related when you're going to get a “set” of things, so ManyToManyFields as you stated or reverse ForeignKeys.
+
+    """
+    {% for product in products %}
+    <p>{{product.title}} - {{product.collection.title}}</p>
+    """
+    # queryset = Product.objects.all()
+    # 1001 queries just becouse we call collection.title
+
+    ## solv :- we need to pre-load data so we use select_related()
+    queryset = Product.objects.select_related("collection").all()
+    # return data in 1 query becouse it use inner-join
+    # Forward ForeignKey relationship
+    """
+    SELECT "store_product"."id",
+       "store_product"."title",
+       "store_product"."slug",
+       "store_product"."description",
+       "store_product"."unit_price",
+       "store_product"."inventory",
+       "store_product"."last_update",
+       "store_product"."collection_id",
+       "store_collection"."id",
+       "store_collection"."title",
+       "store_collection"."featured_product_id"
+    FROM "store_product"
+    INNER JOIN "store_collection"
+    ON ("store_product"."collection_id" = "store_collection"."id")
+    """
+
+    # queryset = Product.objects.select_related("collection__someOtherField").all()
+
+    # queryset = Product.objects.prefetch_related(
+    #     "promotions"
+    # ).all()  # Reverse ForeignKey relationship
+    """
+    SELECT "store_product"."id",
+       "store_product"."title",
+       "store_product"."slug",
+       "store_product"."description",
+       "store_product"."unit_price",
+       "store_product"."inventory",
+       "store_product"."last_update",
+       "store_product"."collection_id"
+    FROM "store_product"
+
+    SELECT ("store_product_promotions"."product_id") AS "_prefetch_related_val_product_id",
+       "store_promotion"."id",
+       "store_promotion"."description",
+       "store_promotion"."discount"
+    FROM "store_promotion"
+    INNER JOIN "store_product_promotions"
+        ON ("store_promotion"."id" = "store_product_promotions"."promotion_id")
+    WHERE "store_product_promotions"."product_id" IN (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,..............1000)
+
+    """
+
+    # note:
+    # 1. select_related me single filed connected like forigenkey wali field le sakte ho
+    # 2. pefech_related me manytomany jisme object se object connected ho .
+
+    # wer can use both in same time
+
+    # queryset =Product.objects.prefetch_related("promotions").select_related("collection").all()
+
+    # Get the las 5 orders with their customer and items (incl product)
+
+    # queryset = (
+    #     Order.objects.select_related("customer")
+    #     .prefetch_related("orderitem_set__product")
+    #     .order_by("-placed_at")[:5]
+    # )
+
+
+    # ---------------
+
+    # Aggregating Objects
+
+    
+
+
+
+    return render(request, "hello.html", {"products": list(queryset)})
 
     # --------------------------------------------
 
