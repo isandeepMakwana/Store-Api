@@ -24,14 +24,13 @@ def say_hello(request):
         content_type=content_type, object_id=1
     )
 
-    return render(request, "hello.html", {"products": queryset})
     # --------------------------------------------
 
     # custom Managers
 
     # every time product and id pura nhi nhi pass karne wale , let's create a custom manager
 
-    TaggedItem.objects.get_tags_for(Product , 1)
+    TaggedItem.objects.get_tags_for(Product, 1)
 
     # ===> get_tags_for function banana hai tags ke model me
     """
@@ -52,7 +51,27 @@ def say_hello(request):
 
     # then it works
 
-    
+    #  --------------------------
+
+    # understanding QuerySet Cache
+
+    # you need write you operation with queryset basic of Cache handling
+
+    # like:
+    queryset = Product.objects.all()  # we get queryset
+    list(queryset)  # convert kiya list me and store kiya cache me
+    queryset[0]  # it produce the output of 0th index
+
+    # ===> but isme problem yee hai ki jab hum queryset[0] karte hai to wo queryset pe fir se opreation karta hai <===
+
+    # ======><><><><> sol:
+    queryset = Product.objects.all()
+    queryset[0]
+    list(
+        queryset
+    )  # convert kiya list me and store kiya cache me but queryset of zero ka data cache se le liya so useko kam traverse karna pada
+
+    return render(request, "hello.html", {"products": queryset})
 
 
 # def say_hello(request):
