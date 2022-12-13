@@ -27,7 +27,32 @@ def say_hello(request):
     return render(request, "hello.html", {"products": queryset})
     # --------------------------------------------
 
+    # custom Managers
 
+    # every time product and id pura nhi nhi pass karne wale , let's create a custom manager
+
+    TaggedItem.objects.get_tags_for(Product , 1)
+
+    # ===> get_tags_for function banana hai tags ke model me
+    """
+    class TaggedItemManager(models.Manager):
+    def get_tags_for(self, obj_type, obj_id):
+        content_type = ContentType.objects.get_for_model(obj_type)
+        quereyset = TaggedItem.objects.select_related("tag").filter(
+            content_type=content_type, object_id=obj_id
+        )
+        return quereyset
+
+
+    and
+    class taggedItem
+    append one more filed
+    objects = TaggedItemManager()
+    """
+
+    # then it works
+
+    
 
 
 # def say_hello(request):
