@@ -16,16 +16,16 @@ python -m pip install django-debug-toolbar
 
 > Building an e-commerce data model
 - relation btw products with collection
-![products with collection](docs/imgs/Sandeep%20Makwana%20-%20Screen%20Shot%202022-11-29%20at%207.51.14%20PM.png)<br>
+- ![products with collection](docs/imgs/Sandeep%20Makwana%20-%20Screen%20Shot%202022-11-29%20at%207.51.14%20PM.png)<br>
 
 - relation btw products ,cart,cartitem
 
-![products ,cart,cartitem](docs/imgs/Sandeep%20Makwana%20-%20Screen%20Shot%202022-11-29%20at%207.51.24%20PM.png)<br>
+- ![products ,cart,cartitem](docs/imgs/Sandeep%20Makwana%20-%20Screen%20Shot%202022-11-29%20at%207.51.24%20PM.png)<br>
 
 - relation btw products , orders, orderItem ,customer
-![products , orders, orderItem ,customer](docs/imgs/Sandeep%20Makwana%20-%20Screen%20Shot%202022-11-29%20at%207.51.31%20PM.png)<br>
+- ![products , orders, orderItem ,customer](docs/imgs/Sandeep%20Makwana%20-%20Screen%20Shot%202022-11-29%20at%207.51.31%20PM.png)<br>
 - relation btw products and tag
-![](docs/imgs/Sandeep%20Makwana%20-%20Screen%20Shot%202022-11-29%20at%207.51.37%20PM.png)<br>
+- ![](docs/imgs/Sandeep%20Makwana%20-%20Screen%20Shot%202022-11-29%20at%207.51.37%20PM.png)<br>
 
 <br>
 <br>
@@ -170,4 +170,14 @@ UTC
 
 ---
 
-# Django ORM
+# Django ORM (Object-relational Mappers)
+~~sql='SELECT * FROM product~~
+products= Product.objects.all()
+
+benifits:
+- Reduce complexity in code
+- Make the code more understandable
+- Help us get more done in less time
+
+The best code is no code
+,A good software engineer delivers working software in time
