@@ -6,20 +6,20 @@ from django.db.models import Count, Max, Min, Avg
 from django.db.models import Value, Func, ExpressionWrapper
 from django.db.models.functions import Concat
 from django.contrib.contenttypes.models import ContentType
-from store.models import Product, OrderItem, Order, Customer
+from store.models import Product, OrderItem, Order, Customer, Collection
 from tags.models import TaggedItem
 
 
-def say_hello(request):
-    from django.shortcuts import render
+# def say_hello(request):
+#     from django.shortcuts import render
 
 
-from django.http import HttpResponse
-from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Q, F
-from django.db.models import Count, Max, Min, Avg
-from django.db.models import Value
-from store.models import Product, OrderItem, Order, Customer
+# from django.http import HttpResponse
+# from django.core.exceptions import ObjectDoesNotExist
+# from django.db.models import Q, F
+# from django.db.models import Count, Max, Min, Avg
+# from django.db.models import Value
+# from store.models import Product, OrderItem, Order, Customer
 
 # {% for product in products %}
 #     <p>{{product.id}} - {{product.customer.first_name}}</p>
@@ -385,11 +385,33 @@ def say_hello(request):
         queryset
     )  # convert kiya list me and store kiya cache me but queryset of zero ka data cache se le liya so useko kam traverse karna pada.
 
-    # ======================================================================================================================================
-
-    # Creating Objects
-
     return render(request, "hello.html", {"products": queryset})
 
 
-# def say_hello(request):
+def say_hello2(request):
+    # ======================================================================================================================================
+
+    # Creating Objects
+    # method 1:(Remmanded)
+
+    # collection = Collection()
+    # collection.title = "video Games"
+    # collection.featured_product = Product(pk=1)
+    # collection.featured_product_id = 1
+    # collection.save()
+
+    # method 2:
+
+    # collection = Collection(
+    #     title="video game2", featured_product=Product(pk=1), featured_product_id=12
+    # )
+    # collection.save()
+
+    # # method 3:
+    # # short method
+
+    # Collection.objects.create(title="a",featured_product=Product(pk=1), featured_product_id=12)
+
+
+    
+    return render(request, "hello.html")
