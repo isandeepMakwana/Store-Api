@@ -9,6 +9,7 @@ from django.contrib.contenttypes.models import ContentType
 from store.models import Product, OrderItem, Order, Customer, Collection
 from tags.models import TaggedItem
 
+from django.db import transaction
 
 # def say_hello(request):
 #     from django.shortcuts import render
@@ -412,6 +413,115 @@ def say_hello2(request):
 
     # Collection.objects.create(title="a",featured_product=Product(pk=1), featured_product_id=12)
 
+    # -------------------------------
+    # Updating Objects
+    # method1: (recommanded)
+    # isme every field me value dena hota
+    # collection = Collection(pk=11)
+    # collection.title = "video game"
+    # collection.featured_product = Product(pk=1)
+    # collection.save()
+    # """
+    #     UPDATE "store_collection"
+    #     SET "title" = 'video game',
+    #         "featured_product_id" = 1
+    #     WHERE "store_collection"."id" = 11
+    # """
+    # collection = Collection(pk=11)
+    # collection.title = "Game"
+    # collection.featured_product = None
+    # collection.save()
+    # """
+    # UPDATE "store_collection"
+    # SET "title" = 'Game',
+    #     "featured_product_id" = NULL
+    # WHERE "store_collection"."id" = 11
+    # """
 
-    
+    # method 2:(issue hai title='' kar dega)
+
+    # collection = Collection(pk=11)
+    # collection.featured_product = None
+    # collection.save()
+
+    # """
+    # UPDATE "store_collection"
+    #  SET "title" = '',
+    # "featured_product_id" = NULL
+    # WHERE "store_collection"."id" = 11
+    # """
+
+    # method 3 :(Good method)
+    # Collection.objects.update(featured_product=None)
+    # """UPDATE "store_collection"
+    # SET "featured_product_id" = NULL"""
+    # # update spacific record
+    # Collection.objects.filter(pk=11).update(featured_product=None)
+    # """
+    # UPDATE "store_collection"
+    # SET "featured_product_id" = NULL
+    # WHERE "store_collection"."id" = 11
+    # """
+
+    # -----------------------------------
+
+    # Deleting Objects
+    # method 1:
+    # collection = Collection(pk=11)
+    # collection.delete()
+    # # method 2:
+    # Collection.objects.filter(id__gt=5).delete()
+
+    # -----------------------------------
+
+    # Transactions (account based)
+
+    # method 1:
+
+    # with transaction.atomic():
+    #     order = Order()
+    #     order.customer_id = 1
+    #     order.save()
+
+    #     item = OrderItem()
+    #     item.order = order
+    #     item.product_id = 1
+    #     item.quantity = 1
+    #     item.unit_price = 10
+    #     item.save()
+
+    # # method 2:
+    # @transaction.atomic()
+    # def sayhello(request):
+    #     order = Order()
+    #     order.customer_id = 1
+    #     order.save()
+
+    #     item = OrderItem()
+    #     item.order = order
+    #     item.product_id = 1
+    #     item.quantity = 1
+    #     item.unit_price = 10
+    #     item.save()
+
+    # -------------
+
+    # Executing Raw SQL Queries
+
+    # result = Product.objects.raw("SELECT * FROM store_product")
+    # """SELECT * FROM store_product"""
+
+    # method 2:
+
+    from django.db import connection
+
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM store_product")
+    cursor.close()
+
+    # method 3:
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM store_product")
+        # cursor.callproc("get_customers", [1, 2, "a"])
+
     return render(request, "hello.html")
