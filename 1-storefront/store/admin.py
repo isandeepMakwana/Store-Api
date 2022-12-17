@@ -60,6 +60,17 @@ class ProductAdmin(admin.ModelAdmin):
 #         return "Low" if product.inventory < 10 else "OK"
 
 
+"""last me gothrow karna # TODO Using Genric Relations
+
+from django.contrib.contenttypes.admin import GenericTabularInline
+from tags.models import TaggedItem
+
+
+class TagInline(GenericTabularInline):
+    autocomplete_fields = ["tag"]
+    model = TaggedItem"""
+
+
 # TODO selecting Related Objects
 
 
@@ -83,6 +94,8 @@ class ProductAdmin(admin.ModelAdmin):
     actions = ["clear_inventory"]
 
     search_fields = ["title"]
+
+    # inlines = [TagInline]
 
     # TODO customizing Forms(add product form)
 
