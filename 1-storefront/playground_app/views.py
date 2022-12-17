@@ -3,126 +3,144 @@ from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q, F, DecimalField
 from django.db.models import Count, Max, Min, Avg
-from django.db.models import Value, Func, ExpressionWrapper
+from django.db.models import (
+    Value,
+    Func,
+    ExpressionWrapper,
+)  # These imports bring in Django's Value, Func, and ExpressionWrapper classes, which allow you to create custom SQL expressions to use in your queries.
 from django.db.models.functions import Concat
 from django.contrib.contenttypes.models import ContentType
 from store.models import Product, OrderItem, Order, Customer, Collection
 from tags.models import TaggedItem
-
 from django.db import transaction
 
-# def say_hello(request):
-#     from django.shortcuts import render
-
-
-# from django.http import HttpResponse
-# from django.core.exceptions import ObjectDoesNotExist
-# from django.db.models import Q, F
-# from django.db.models import Count, Max, Min, Avg
-# from django.db.models import Value
-# from store.models import Product, OrderItem, Order, Customer
-
-# {% for product in products %}
-#     <p>{{product.id}} - {{product.customer.first_name}}</p>
-#     {% endfor %}
+# TODO: Add error handling for invalid input
+# FIXME: This code is causing a runtime error
+# HACK: This is a temporary fix until we can rewrite the function
+# XXX: This code is highly experimental and may not work
+# NOTE: Remember to update the database schema after making changes to the model
 
 
 def say_hello(request):
-    # # get all product data(object)
-    # query_set = Product.objects.all()
-    # # for product in query_set:
-    # #     print(product)
-    # print(list(query_set))
+    # {% for product in products %}
+    #     <p>{{product.id}} - {{product.customer.first_name}}</p>
+    #     {% endfor %}
+    pass
+
+
+def get_product_data(request):
+    ## get all product data(object)
+    query_set = Product.objects.all()
+    for product in query_set:
+        print(product)
+    print(list(query_set))
 
     # ----
     # retrieving Objects
-    # product = Product.objects.get(id=1)
-    # product = Product.objects.get(pk=1)
+    product = Product.objects.get(id=1)
+    product = Product.objects.get(pk=1)
 
     # -------
-    # try:
-    #     product = Product.objects.get(pk=0)
-    # except ObjectDoesNotExist:
-    #     pass
+    # Product object with a primary key (pk) of 0 from the database. If no such object exists, Django will raise an ObjectDoesNotExist exception.
+    try:
+        product = Product.objects.get(pk=0)
+    except ObjectDoesNotExist:
+        pass
 
     # -------
-
-    # product = Product.objects.filter(pk=0).exists()
-    # print(product)
-    # return render(request, "hello.html", {"name": product})
+    # object exists of not
+    product = Product.objects.filter(pk=0).exists()
+    print(product)
+    return render(request, "hello.html", {"name": product})
 
     # ----------
 
-    # Filtering Objects
 
-    # queryset = Product.objects.filter(unit_price=20)
-    # queryset = Product.objects.filter(unit_price > 20)  # NOT WROKING
-    # queryset = Product.objects.filter(unit_price__gt=20)
+def Filtering_Objects(request):
+    # TODO Filtering Objects
 
-    # [queryset api](https://docs.djangoproject.com/en/4.1/ref/models/querysets/)
-    # queryset = Product.objects.filter(unit_price__range=(20,30))
+    queryset = Product.objects.filter(unit_price=20)
+    queryset = Product.objects.filter(
+        unit_price > 20
+    )  # XXX NOT WROKING because the > operator is not surrounded by quotes, so Python will interpret it as a syntax error.
+    # To fix this, you can wrap the unit_price field in quotes to indicate that it is a string. Here is the correct
+    # queryset = Product.objects.filter(unit_price > '20')
+
+    queryset = Product.objects.filter(unit_price__gt=20)  # working
+
+    # NOTE [queryset api](https://docs.djangoproject.com/en/4.1/ref/models/querysets/)
+    queryset = Product.objects.filter(unit_price__range=(20, 30))
     # -----
 
     # keyword=value
-    # queryset = Product.objects.filter(collection_id=1)
-    # queryset = Product.objects.filter(collection__id__range=(1, 3))
-    # queryset = Product.objects.filter(title__icontains="coffee") # it check case incase sensitive
-    # # queryset = Product.objects.filter(title__icontains="-coffee")
-    # queryset = Product.objects.filter(last_update__year=2021)
-    # queryset = Product.objects.filter(description__isnull=True)
+    queryset = Product.objects.filter(collection_id=1)
+    queryset = Product.objects.filter(collection__id__range=(1, 3))
+    queryset = Product.objects.filter(
+        title__icontains="coffee"
+    )  # it check case incase sensitive
+    queryset = Product.objects.filter(title__icontains="-coffee")
+    queryset = Product.objects.filter(last_update__year=2021)
+    queryset = Product.objects.filter(description__isnull=True)
 
     # -------
 
-    # complex lookups Using Q objects
+    # TODO complex lookups Using Q objects
 
     # inventory < 10 AND price <20
 
-    # queryset = Product.objects.filter(inventory__lt=10, unit_price__lt=20)
+    queryset = Product.objects.filter(inventory__lt=10, unit_price__lt=20)
     # or
-    # queryset = Product.objects.filter(inventory__lt=10).filter(unit_price__lt=20)
+    queryset = Product.objects.filter(inventory__lt=10).filter(unit_price__lt=20)
 
     # return render(request, "hello.html", {"name": queryset})
 
     # inventory < 10 OR price <20
-    # queryset = Product.objects.filter(Q(inventory__lt=10) | Q(unit_price__lt=20))
-    # queryset = Product.objects.filter(Q(inventory__lt=10) & ~Q(unit_price__lt=20))
+    queryset = Product.objects.filter(Q(inventory__lt=10) | Q(unit_price__lt=20))
+    queryset = Product.objects.filter(Q(inventory__lt=10) & ~Q(unit_price__lt=20))
 
     # ------
-    # Referencing Fields using F Objects
+    # TODO Referencing Fields using F Objects
 
     # Products : inventory = price
-    # queryset = Product.objects.filter(inventory="unit_price") #error
-    # queryset = Product.objects.filter(inventory=F("unit_price"))
-    # queryset = Product.objects.filter(~Q(inventory=F("collection__id")))
+    queryset = Product.objects.filter(
+        inventory="unit_price"
+    )  # XXX Error  will not work as expected because the inventory field is being compared to the string "unit_price", rather than the value of the unit_price field.
+    queryset = Product.objects.filter(inventory=F("unit_price"))  # working
+    queryset = Product.objects.filter(
+        ~Q(inventory=F("collection__id"))
+    )  # NOTE not equal to condition
 
     # -----------
-    # sorting
 
-    # queryset = Product.objects.order_by("title")  # title ASC
-    # queryset = Product.objects.order_by("-title")  # title DESC
-    # queryset = Product.objects.order_by("unit_price", "-title")
-    # queryset = Product.objects.order_by("unit_price", "-title").reverse()
-    # queryset = Product.objects.filter(collection_id=1).order_by("unit_price")
 
-    # product = Product.objects.order_by("unit_price")[0]  # return product
-    # # or
-    # product = Product.objects.latest("unit_price")  # without sort it return product
+def function_for_more(request):
+    # TODO Sorting
+
+    queryset = Product.objects.order_by("title")  # title ASC
+    queryset = Product.objects.order_by("-title")  # title DESC
+    queryset = Product.objects.order_by("unit_price", "-title")
+    queryset = Product.objects.order_by("unit_price", "-title").reverse()
+    queryset = Product.objects.filter(collection_id=1).order_by("unit_price")
+
+    product = Product.objects.order_by("unit_price")[0]  # return product
+    # or
+    product = Product.objects.latest("unit_price")  # without sort it return product
 
     # -------------
 
-    # Lilmiting Results and offset
+    # TODO Lilmiting Results and offset
 
     # 0,1,2,3,4
-    # queryset = Product.objects.all()[:5]
+    queryset = Product.objects.all()[:5]
     # # 5,6,7,8,9
-    # queryset = Product.objects.all()[5:10]
+    queryset = Product.objects.all()[5:10]
 
     # ---------------------------
 
-    # Selecting Fields to Query
+    # TODO Selecting Fields to Query
 
-    # queryset = Product.objects.values("id", "title")  # return dict objects
-    # queryset = Product.objects.values("id", "title", "collection__title")
+    queryset = Product.objects.values("id", "title")  # return dict objects
+    queryset = Product.objects.values("id", "title", "collection__title")
     """
     SELECT "store_product"."id",
        "store_product"."title",
@@ -131,23 +149,24 @@ def say_hello(request):
     INNER JOIN "store_collection"
         ON ("store_product"."collection_id" = "store_collection"."id")
     """
-    # queryset = Product.objects.values_list(
-    #     "id", "title", "collection__title"
-    # )  # return tuple objects
-    # # ------------------------
-    # distinct
+    queryset = Product.objects.values_list(
+        "id", "title", "collection__title"
+    )  # return tuple objects
 
-    # queryset = OrderItem.objects.values("product_id").distinct()
+    # ------------------------
+    # TODO distinct
 
-    # # in or nested query
-    # queryset = Product.objects.filter(
-    #     id__in=OrderItem.objects.values("product_id").distinct()
-    # ).order_by("title")
+    queryset = OrderItem.objects.values("product_id").distinct()
+
+    # TODO IN or Nested Query
+    queryset = Product.objects.filter(
+        id__in=OrderItem.objects.values("product_id").distinct()
+    ).order_by("title")
 
     # -------------------------
-    # deferring Fields
+    # TODO deferring Fields
     # not remmended method
-    # queryset = Product.objects.only("id", "title")  # drow back if try to get
+    queryset = Product.objects.only("id", "title")  # drow back if try to get
     """
     product.unit_price
     then yee 1000 spreate queries karta hai like this
@@ -166,7 +185,7 @@ def say_hello(request):
 
     # -------------
 
-    # queryset = Product.objects.defer("description")
+    queryset = Product.objects.defer("description")
     """isme only descripition load nhi hota baki sub hota hai
     SELECT "store_product"."id",
        "store_product"."title",
@@ -180,18 +199,20 @@ def say_hello(request):
 
     # ---------------------------
 
-    # Selecting Related Objects
 
-    # select_releted(1) “follows” foreign-key relationships, selecting additional related-object data when it executes its query
+def pre_load(request):
+    # TODO Selecting Related Objects
+
+    # NOTE select_releted(1) “follows” foreign-key relationships, selecting additional related-object data when it executes its query
     # prefetch_related(n) does a separate lookup for each relationship and does the “joining” in Python.
 
-    # One uses select_related when the object that you're going to be selecting is a single object, so OneToOneField or a ForeignKey. You use prefetch_related when you're going to get a “set” of things, so ManyToManyFields as you stated or reverse ForeignKeys.
+    # NOTE One uses select_related when the object that you're going to be selecting is a single object, so OneToOneField or a ForeignKey. You use prefetch_related when you're going to get a “set” of things, so ManyToManyFields as you stated or reverse ForeignKeys.
 
     """
     {% for product in products %}
     <p>{{product.title}} - {{product.collection.title}}</p>
     """
-    # queryset = Product.objects.all()
+    queryset = Product.objects.all()
     # 1001 queries just becouse we call collection.title
 
     ## solv :- we need to pre-load data so we use select_related()
@@ -215,11 +236,11 @@ def say_hello(request):
     ON ("store_product"."collection_id" = "store_collection"."id")
     """
 
-    # queryset = Product.objects.select_related("collection__someOtherField").all()
+    queryset = Product.objects.select_related("collection__someOtherField").all()
 
-    # queryset = Product.objects.prefetch_related(
-    #     "promotions"
-    # ).all()  # Reverse ForeignKey relationship
+    queryset = Product.objects.prefetch_related(
+        "promotions"
+    ).all()  # Reverse ForeignKey relationship
     """
     SELECT "store_product"."id",
        "store_product"."title",
@@ -242,39 +263,48 @@ def say_hello(request):
 
     """
 
-    # note:
+    # NOTE:
     # 1. select_related me single filed connected like forigenkey wali field le sakte ho
     # 2. pefech_related me manytomany jisme object se object connected ho .
 
     # wer can use both in same time
 
-    # queryset =Product.objects.prefetch_related("promotions").select_related("collection").all()
+    queryset = (
+        Product.objects.prefetch_related("promotions")
+        .select_related("collection")
+        .all()
+    )
 
     # Get the las 5 orders with their customer and items (incl product)
 
-    # queryset = (
-    #     Order.objects.select_related("customer")
-    #     .prefetch_related("orderitem_set__product")
-    #     .order_by("-placed_at")[:5]
-    # )
+    queryset = (
+        Order.objects.select_related("customer")
+        .prefetch_related("orderitem_set__product")
+        .order_by("-placed_at")[:5]
+    )
 
     # ---------------
 
-    # Aggregating Objects
 
-    #  count = Product.objects.aggregate(Count("id"))
-    #  count = Product.objects.aggregate(Count("description"))
-    #  count = Product.objects.aggregate(count=Count("id"))
-    #  count = Product.objects.aggregate(discriptions_count=Count("description"))
-    #  count = Product.objects.aggregate(count=Count("id"), min_price=Min("unit_price"))
-    #  count = Product.objects.filter("collection__id=1").aggregate(
-    #      count=Count("id"), min_price=Min("unit_price")
-    #  )
+def sql_functions(request):
+    # TODO Aggregating Objects
+
+    count = Product.objects.aggregate(Count("id"))
+    count = Product.objects.aggregate(Count("description"))
+    count = Product.objects.aggregate(count=Count("id"))
+    count = Product.objects.aggregate(discriptions_count=Count("description"))
+    count = Product.objects.aggregate(count=Count("id"), min_price=Min("unit_price"))
+    count = Product.objects.filter("collection__id=1").aggregate(
+        count=Count("id"), min_price=Min("unit_price")
+    )
     # --------------
-    # Annotating Objects (means create new fild )
+
+    # TODO Annotating Objects (means create new fild )
     # sometime we need aditional attribute object while quering theam
 
-    #  queryset = Customer.objects.annotate(is_new=True) # error : boolean value not accepted
+    queryset = Customer.objects.annotate(
+        is_new=True
+    )  # XXX Error : boolean value not accepted
 
     # in django have Expression class which is a base class of all type of expression_classes
     #  - Value
@@ -282,57 +312,63 @@ def say_hello(request):
     #  - Func
     #  - Aggregate
 
-    #  queryset = Customer.objects.annotate(is_new=Value(True))
-    # queryset = Customer.objects.annotate(new_id=F("id") + 1)
+    queryset = Customer.objects.annotate(is_new=Value(True))
+    queryset = Customer.objects.annotate(new_id=F("id") + 1)
     # ---------------------
-    # calling database functions
+
+    # TODO calling database functions
 
     # CONCAT
-    # queryset = Customer.objects.annotate(
-    #     full_name=Func(F("first_name"), Value(" "), F("last_name"), function="CONCAT")
-    # )
+    queryset = Customer.objects.annotate(
+        full_name=Func(F("first_name"), Value(" "), F("last_name"), function="CONCAT")
+    )
 
     # # OR
 
-    # queryset = Customer.objects.annotate(
-    #     full_name=Concat("first_name", Value(" "), "last_name")
-    # )
+    queryset = Customer.objects.annotate(
+        full_name=Concat("first_name", Value(" "), "last_name")
+    )
 
-    # [django database functions](https://docs.djangoproject.com/en/4.1/ref/models/database-functions/)
+    # NOTE [django database functions](https://docs.djangoproject.com/en/4.1/ref/models/database-functions/)
 
     # --------------------
-    # Grouping Data
+
+    # TODO Grouping Data
 
     # djang have a restrictions we can't able to use order_set
     # instead of order_set we use order
     queryset = Customer.objects.annotate(order_count=Count("order"))
 
     # ------------------
-    # Working with Expression Wrappers
+    # TODO Working with Expression Wrappers
     # Expression is base class of all the expression classes
     # - Value , F , Func , Aggregate , ExpressionWrapper
 
-    # queryset = Product.objects.annotate(discounted_price=F('unit_price')*0.8) #error decimal filed can't multlply by floadfiled
+    queryset = Product.objects.annotate(
+        discounted_price=F("unit_price") * 0.8
+    )  # XXX Error decimal filed can't multlply by floadfiled
 
-    # queryset = Product.objects.annotate(
-    #     discounted_price=ExpressionWrapper(
-    #         F("unit_price") * 0.8, output_field=DecimalField()
-    #     )
-    # )
+    queryset = Product.objects.annotate(
+        discounted_price=ExpressionWrapper(
+            F("unit_price") * 0.8, output_field=DecimalField()
+        )
+    )
 
     # OR
 
-    # discounted_price = ExpressionWrapper(
-    #     F("unit_price") * 0.8, output_field=DecimalField()
-    # )
-    # queryset = Product.objects.annotate(discounted_price=discounted_price)
+    discounted_price = ExpressionWrapper(
+        F("unit_price") * 0.8, output_field=DecimalField()
+    )
+    queryset = Product.objects.annotate(discounted_price=discounted_price)
 
     # -----------------------
 
-    # Querying Generic Relationships
 
-    # content_type = ContentType.objects.get_for_model(Product)
-    # queryset = TaggedItem.objects.filter(content_type=content_type, object_id=1)
+def Querying_Generic_Relationships(request):
+    # TODO Querying Generic Relationships
+
+    content_type = ContentType.objects.get_for_model(Product)
+    queryset = TaggedItem.objects.filter(content_type=content_type, object_id=1)
 
     content_type = ContentType.objects.get_for_model(Product)
     queryset = TaggedItem.objects.select_related("tag").filter(
@@ -341,7 +377,7 @@ def say_hello(request):
 
     # --------------------------------------------
 
-    # custom Managers
+    # TODO custom Managers
 
     # every time product and id pura nhi nhi pass karne wale , let's create a custom manager
 
@@ -363,12 +399,13 @@ def say_hello(request):
     append one more filed
     objects = TaggedItemManager()
     """
-
     # then it works
 
     #  --------------------------
 
-    # understanding QuerySet Cache
+
+def understanding_QuerySet_Cache(request):
+    # TODO understanding QuerySet Cache
 
     # you need write you operation with queryset basic of Cache handling
 
@@ -382,134 +419,135 @@ def say_hello(request):
     # ======><><><><> sol:
     queryset = Product.objects.all()
     queryset[0]
-    list(
-        queryset
-    )  # convert kiya list me and store kiya cache me but queryset of zero ka data cache se le liya so useko kam traverse karna pada.
+    print(list(queryset))
+    # NOTE convert kiya list me and store kiya cache me but queryset of zero ka data cache se le liya so useko kam traverse karna pada.
 
     return render(request, "hello.html", {"products": queryset})
 
 
-def say_hello2(request):
+def CRUD_opreations(request):
     # ======================================================================================================================================
 
-    # Creating Objects
+    # TODO Creating Objects
     # method 1:(Remmanded)
 
-    # collection = Collection()
-    # collection.title = "video Games"
-    # collection.featured_product = Product(pk=1)
-    # collection.featured_product_id = 1
-    # collection.save()
+    collection = Collection()
+    collection.title = "video Games"
+    collection.featured_product = Product(pk=1)
+    collection.featured_product_id = 1
+    collection.save()
 
     # method 2:
 
-    # collection = Collection(
-    #     title="video game2", featured_product=Product(pk=1), featured_product_id=12
-    # )
-    # collection.save()
+    collection = Collection(
+        title="video game2", featured_product=Product(pk=1), featured_product_id=12
+    )
+    collection.save()
 
     # # method 3:
     # # short method
 
-    # Collection.objects.create(title="a",featured_product=Product(pk=1), featured_product_id=12)
+    Collection.objects.create(
+        title="a", featured_product=Product(pk=1), featured_product_id=12
+    )
 
     # -------------------------------
-    # Updating Objects
+    # TODO Updating Objects
     # method1: (recommanded)
     # isme every field me value dena hota
-    # collection = Collection(pk=11)
-    # collection.title = "video game"
-    # collection.featured_product = Product(pk=1)
-    # collection.save()
-    # """
-    #     UPDATE "store_collection"
-    #     SET "title" = 'video game',
-    #         "featured_product_id" = 1
-    #     WHERE "store_collection"."id" = 11
-    # """
-    # collection = Collection(pk=11)
-    # collection.title = "Game"
-    # collection.featured_product = None
-    # collection.save()
-    # """
-    # UPDATE "store_collection"
-    # SET "title" = 'Game',
-    #     "featured_product_id" = NULL
-    # WHERE "store_collection"."id" = 11
-    # """
+    collection = Collection(pk=11)
+    collection.title = "video game"
+    collection.featured_product = Product(pk=1)
+    collection.save()
+    """
+        UPDATE "store_collection"
+        SET "title" = 'video game',
+            "featured_product_id" = 1
+        WHERE "store_collection"."id" = 11
+    """
+    collection = Collection(pk=11)
+    collection.title = "Game"
+    collection.featured_product = None
+    collection.save()
+    """
+    UPDATE "store_collection"
+    SET "title" = 'Game',
+        "featured_product_id" = NULL
+    WHERE "store_collection"."id" = 11
+    """
 
     # method 2:(issue hai title='' kar dega)
 
-    # collection = Collection(pk=11)
-    # collection.featured_product = None
-    # collection.save()
+    collection = Collection(pk=11)
+    collection.featured_product = None
+    collection.save()
 
-    # """
-    # UPDATE "store_collection"
-    #  SET "title" = '',
-    # "featured_product_id" = NULL
-    # WHERE "store_collection"."id" = 11
-    # """
+    """
+    UPDATE "store_collection"
+     SET "title" = '',
+    "featured_product_id" = NULL
+    WHERE "store_collection"."id" = 11
+    """
 
     # method 3 :(Good method)
-    # Collection.objects.update(featured_product=None)
-    # """UPDATE "store_collection"
-    # SET "featured_product_id" = NULL"""
-    # # update spacific record
-    # Collection.objects.filter(pk=11).update(featured_product=None)
-    # """
-    # UPDATE "store_collection"
-    # SET "featured_product_id" = NULL
-    # WHERE "store_collection"."id" = 11
-    # """
+    Collection.objects.update(featured_product=None)
+    """UPDATE "store_collection"
+    SET "featured_product_id" = NULL"""
+    # update spacific record
+    Collection.objects.filter(pk=11).update(featured_product=None)
+    """
+    UPDATE "store_collection"
+    SET "featured_product_id" = NULL
+    WHERE "store_collection"."id" = 11
+    """
 
     # -----------------------------------
 
-    # Deleting Objects
+    # TODO Deleting Objects
     # method 1:
-    # collection = Collection(pk=11)
-    # collection.delete()
-    # # method 2:
-    # Collection.objects.filter(id__gt=5).delete()
+    collection = Collection(pk=11)
+    collection.delete()
+    # method 2:
+    Collection.objects.filter(id__gt=5).delete()
 
     # -----------------------------------
 
-    # Transactions (account based)
+    # TODO Transactions (account based)
 
     # method 1:
 
-    # with transaction.atomic():
-    #     order = Order()
-    #     order.customer_id = 1
-    #     order.save()
+    with transaction.atomic():
+        order = Order()
+        order.customer_id = 1
+        order.save()
 
-    #     item = OrderItem()
-    #     item.order = order
-    #     item.product_id = 1
-    #     item.quantity = 1
-    #     item.unit_price = 10
-    #     item.save()
+        item = OrderItem()
+        item.order = order
+        item.product_id = 1
+        item.quantity = 1
+        item.unit_price = 10
+        item.save()
 
     # # method 2:
-    # @transaction.atomic()
-    # def sayhello(request):
-    #     order = Order()
-    #     order.customer_id = 1
-    #     order.save()
+    @transaction.atomic()
+    def sayhello(request):
+        order = Order()
+        order.customer_id = 1
+        order.save()
 
-    #     item = OrderItem()
-    #     item.order = order
-    #     item.product_id = 1
-    #     item.quantity = 1
-    #     item.unit_price = 10
-    #     item.save()
+        item = OrderItem()
+        item.order = order
+        item.product_id = 1
+        item.quantity = 1
+        item.unit_price = 10
+        item.save()
 
     # -------------
+def executing_Raw_SQL_Queries(request):
+    #TODO Executing Raw SQL Queries
 
-    # Executing Raw SQL Queries
-
-    # result = Product.objects.raw("SELECT * FROM store_product")
-    # """SELECT * FROM store_product"""
+    result = Product.objects.raw("SELECT * FROM store_product")
+    """SELECT * FROM store_product"""
 
     # method 2:
 
