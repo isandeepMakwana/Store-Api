@@ -204,4 +204,9 @@ python manage.py createsuperuser
 python manage.py changepassword admin
 ```
 
+## to site_header
+[project_urls](1-storefront/storefront/urls.py)
 
+
+## Registering Models
+[store_admin.py](1-storefront/store/admin.py)

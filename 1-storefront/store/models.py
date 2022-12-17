@@ -13,6 +13,12 @@ class Collection(models.Model):
         "Product", on_delete=models.SET_NULL, null=True, related_name="+"
     )
 
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ["title"]
+
 
 class Product(models.Model):
     title = models.CharField(max_length=255)
@@ -28,6 +34,12 @@ class Product(models.Model):
     # ManyToMany
     promotions = models.ManyToManyField(Promotion)
     # promotion=models.ManyToManyField(Promotion,related_name='products')
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ["title"]
 
 
 class Customer(models.Model):
@@ -48,12 +60,16 @@ class Customer(models.Model):
         max_length=1, choices=MEMBERSHIP_CHOICES, default=MEMBERSHIP_BRONZE
     )
 
-    # class Meta:
-    #     db_table = "store_new_customer"
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
 
-    # #     indexes =[
-    # # models.Index(fields=['last_name','first_name'])
-    # #    ]
+    class Meta:
+        #     db_table = "store_new_customer"
+
+        # #     indexes =[
+        # # models.Index(fields=['last_name','first_name'])
+        # #    ]
+        ordering = ["first_name", "last_name"]
 
 
 class Order(models.Model):
