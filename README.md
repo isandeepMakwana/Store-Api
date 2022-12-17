@@ -210,3 +210,59 @@ python manage.py changepassword admin
 
 ## Registering Models
 [store_admin.py](1-storefront/store/admin.py)
+
+
+----------------
+---
+
+# Django-Rest-API
+
+## Building Restful APIs
+- introduction to Restful APIs
+- installing Django REST Framework
+- creating API views
+- Creating serializers
+- serializing and deserializing models
+
+
+## RESOURCES :
+- Product
+- Collection
+- Cart
+
+> URL (Uniform Resource Locator)
+> - http://localhost:8000/products
+> - http://localhost:8000/products/1
+> - http://localhost:8000/products/1/reviews
+
+## REPRESENTATIONS (Resource Representations):
+- HTML
+- XML
+- JSON(javaScript Object Notation)
+
+
+## HTTP Methods
+
+- GET
+- POST
+- PUT (update hole thing)
+- PATCH (update a single field)
+- DELETE
+
+
+# installing Django REST Framework
+```bash
+pipenv install djangorestframework
+```
+
+
+# let's Create API Views
+[django-rest-api/store/views.py](django-rest-api/store/views.py)
+
+
+
+# Serializer:(converts a model instace to a dictionary)
+- [x] We need to convert product object to a JSON object
+- [x] Serializer converts the product object to dict object
+
+- [x] rest_framework have a jsocnrenderer class and this class have to render a method accept a dict object and returns json object.
