@@ -184,3 +184,24 @@ The best code is no code
 
 
 
+# Django Admin
+
+- customizing the adming interface
+- adding computed columns
+- loading related objects
+- adding search & filter
+- implementing cutom actions
+- Adding data validation
+
+## setting up the Admin Site
+
+```bash
+python manage.py createsuperuser
+```
+
+> for change password
+```bash
+python manage.py changepassword admin
+```
+
+
