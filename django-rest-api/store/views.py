@@ -4,8 +4,8 @@ from django.http import HttpResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Product
-from .serializers import ProdcutSerializers
+from .models import Product, Collection
+from .serializers import ProductSerializers, CollectionSerializers
 
 from django.shortcuts import get_object_or_404
 
@@ -45,16 +45,23 @@ def product_detail(request, id):
 
     # method 2:
     product = get_object_or_404(Product, pk=id)
-    serializer = ProdcutSerializers(product)
+    serializer = ProductSerializers(product)
     return Response(serializer.data)
 
-    """{
-    "detail": "Not found."
-    }"""
+    # """{
+    # "detail": "Not found."
+    # }"""
 
 
 @api_view()
 def product_list(request):
-    products = Product.objects.all()
-    serializer = ProdcutSerializers(products, many=True)
+    products = Product.objects.select_related("collection").all()
+    serializer = ProductSerializers(products, many=True, context={"request": request})
+    return Response(serializer.data)
+
+
+@api_view()
+def collection_detail(request, pk):
+    collection = get_object_or_404(Collection, pk=pk)
+    serializer = CollectionSerializers(collection)
     return Response(serializer.data)
