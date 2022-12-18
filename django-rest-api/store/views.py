@@ -24,13 +24,14 @@ def product_list(request):
 - rest_framework have a jsocnrenderer class and this class have to render a method accept a dict object and returns json object."""
 
 # XXX issue if id =0 then show error
-# @api_view()
-# def product_detail(request, id):
-#     product = Product.objects.get(pk=id)
-#     serializer = ProdcutSerializers(product)
-#     return Response(serializer.data)
+@api_view()
+def product_detail(request, id):
+    product = Product.objects.get(pk=id)
+    serializer = ProductSerializers(product)
+    return Response(serializer.data)
 
-# solv:
+
+"""# solv:
 
 
 @api_view()
@@ -48,16 +49,53 @@ def product_detail(request, id):
     serializer = ProductSerializers(product)
     return Response(serializer.data)
 
-    # """{
+    #{
     # "detail": "Not found."
-    # }"""
+    # }
+"""
+
+# TODO Deserializing Objects
 
 
-@api_view()
+@api_view(["GET", "POST"])
 def product_list(request):
-    products = Product.objects.select_related("collection").all()
-    serializer = ProductSerializers(products, many=True, context={"request": request})
-    return Response(serializer.data)
+    if request.method == "GET":
+        products = Product.objects.select_related("collection").all()
+        serializer = ProductSerializers(
+            products, many=True, context={"request": request}
+        )
+        return Response(serializer.data)
+    elif request.method == "POST":
+        # NOTE Deserializing Objects
+        serializer = ProductSerializers(data=request.data)
+        # NOTE Data Validation
+        # print(serializer.validated_data)
+        # ------------------
+        # method 1
+        # try:
+        #     if serializer.is_valid():
+        #         return Response("ok")
+        # except Exception:
+        #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # --------------
+        # method 2
+        # if serializer.is_valid(raise_exception=True):
+        #     return Response("ok")
+        # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # --------------
+        # method 3 (recommanded)
+        serializer.is_valid(
+            raise_exception=True
+        )  # yee validate kar deta hai , but if we want extara validation like conform password
+        """
+        Product serailizer me yee function add karna hai
+         def validate(self, data):
+            if data['password']!=data['confirm_password']:
+                return serializers.ValidationError("passwords not matched")
+            return data
+        """
+        # print(serializer.validated_data)
+        return Response("OK")
 
 
 @api_view()
@@ -65,3 +103,7 @@ def collection_detail(request, pk):
     collection = get_object_or_404(Collection, pk=pk)
     serializer = CollectionSerializers(collection)
     return Response(serializer.data)
+
+
+# TODO save Objects
+

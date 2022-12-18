@@ -107,11 +107,16 @@ class ProductSerializers(serializers.ModelSerializer):
             "collection",
         ]
 
-    collection = serializers.HyperlinkedRelatedField(
-        queryset=Collection.objects.all(),
-        view_name="collection-detail",
-    )
+    # collection = serializers.HyperlinkedRelatedField(
+    #     queryset=Collection.objects.all(),
+    #     view_name="collection-detail",
+    # )
     price_with_tax = serializers.SerializerMethodField(method_name="calculated_tax")
 
     def calculated_tax(self, prodcut: Product):
         return prodcut.unit_price * Decimal(1.11)
+
+    # def validate(self, data):
+    #     if data['password']!=data['confirm_password']:
+    #         return serializers.ValidationError("passwords not matched")
+    #     return data
