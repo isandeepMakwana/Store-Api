@@ -1,5 +1,6 @@
 from decimal import Decimal
 from store.models import Product, Collection
+
 from rest_framework import serializers
 
 
@@ -89,11 +90,21 @@ class ProductSerializers(serializers.Serializer):
 
 # TODO Model Serializers
 
+# We define fields and validation two time 1. Models and 2. Serialisers
+
+# Issue :
+# Whenever we change the fields we need change this 2 places and validations also
+
+# Solv:
+# We use modelSerializer to crate quickly serialiser without duplications
+
 
 class CollectionSerializers(serializers.ModelSerializer):
     class Meta:
         model = Collection
-        fields = ["id", "title"]
+        fields = ["id", "title", "product_count"]
+
+    product_count = serializers.IntegerField(required=False)
 
 
 class ProductSerializers(serializers.ModelSerializer):
@@ -102,6 +113,9 @@ class ProductSerializers(serializers.ModelSerializer):
         fields = [
             "id",
             "title",
+            "description",
+            "slug",
+            "inventory",
             "unit_price",
             "price_with_tax",
             "collection",
@@ -113,10 +127,21 @@ class ProductSerializers(serializers.ModelSerializer):
     # )
     price_with_tax = serializers.SerializerMethodField(method_name="calculated_tax")
 
-    def calculated_tax(self, prodcut: Product):
-        return prodcut.unit_price * Decimal(1.11)
+    def calculated_tax(self, product: Product):
+        return product.unit_price * Decimal(1.11)
 
     # def validate(self, data):
     #     if data['password']!=data['confirm_password']:
     #         return serializers.ValidationError("passwords not matched")
     #     return data
+
+    # def create(self, validated_data):
+    #     product = Product(**validated_data)  # unpack the dict
+    #     product.other_field = 1
+    #     product.save()
+    #     return product
+
+    # def update(self, instance, validated_data):
+    #     instance.unit_price = validated_data.get("unit_price")
+    #     instance.save()
+    #     return instance
