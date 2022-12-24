@@ -281,3 +281,8 @@ pip install django-filter
 ```
 set the app in installed app
 ===django_filters===,
+
+
+# create a genric filters
+[x] create filters.py and start writing
+    [filters.py](2-Advanced-rest-api-viewset/store/filters.py)
