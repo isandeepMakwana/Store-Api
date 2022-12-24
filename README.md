@@ -286,3 +286,10 @@ set the app in installed app
 # create a genric filters
 [x] create filters.py and start writing
     [filters.py](2-Advanced-rest-api-viewset/store/filters.py)
+
+
+# create searching
+[store-views.py](2-Advanced-rest-api-viewset/store/views.py)
+
+
+# Sorting

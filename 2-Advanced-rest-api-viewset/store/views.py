@@ -6,6 +6,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.filters import SearchFilter
 from .models import Product, Collection, OrderItem, Reviews
 from .filters import ProductFilter
 from .serializers import ProductSerializers, CollectionSerializers, ReviewsSerializers
@@ -127,7 +128,7 @@ class ReviewsViewSet(ModelViewSet):
 "http://localhost:8000/store/products/?collection_id=3&unit_price__gt=10&unit_price__lt=20"
 
 
-class ProductViewSet(ModelViewSet):
+"""class ProductViewSet(ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializers
     filter_backends = [DjangoFilterBackend]
@@ -140,4 +141,45 @@ class ProductViewSet(ModelViewSet):
     def destroy(self, request, *args, **kwargs):  # delete one objects
         if OrderItem.objects.filter(product_id=kwargs["pk"]).count():
             return Response({"error": "Product cannot be deleted."})
+        return super().destroy(request, *args, **kwargs)"""
+
+
+# TODO Searching
+"http://localhost:8000/store/products/?search=apple"
+"http://localhost:8000/store/products/?search=apple+10xz"
+
+# '^' Starts-with search.
+# '=' Exact matches.
+# '@' Full-text search. (Currently only supported Django's PostgreSQL backend.)
+# '$' Regex search.
+
+
+class ProductViewSet(ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializers
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    filterset_class = ProductFilter
+    search_fields = [
+        "^title",
+        "description",
+        # "collection__title",
+    ]  # collection_title is not showing but it search internaly
+
+    ## change the search to find
+    # http://localhost:8000/store/products/?find=Anchovy
+    """    REST_FRAMEWORK = {
+        "COERCE_DECIMAL_TO_STRING": False,
+        "SEARCH_PARAM": "find",
+    }"""
+
+    def get_serializer_context(self):
+        return {"request": self.request}
+
+    # delete method for delete all list and one object also
+    def destroy(self, request, *args, **kwargs):  # delete one objects
+        if OrderItem.objects.filter(product_id=kwargs["pk"]).count():
+            return Response({"error": "Product cannot be deleted."})
         return super().destroy(request, *args, **kwargs)
+
+
+# TODO Sorting
