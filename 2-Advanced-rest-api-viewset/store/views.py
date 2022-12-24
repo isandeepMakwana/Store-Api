@@ -7,6 +7,7 @@ from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.pagination import PageNumberPagination
 from .models import Product, Collection, OrderItem, Reviews
 from .filters import ProductFilter
 from .serializers import ProductSerializers, CollectionSerializers, ReviewsSerializers
@@ -187,13 +188,48 @@ class ReviewsViewSet(ModelViewSet):
 "http://localhost:8000/store/products/?ordering=-unit_price"
 
 
-class ProductViewSet(ModelViewSet):
+"""class ProductViewSet(ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializers
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = ProductFilter
     search_fields = ["^title", "description"]
     ordering_fields = ["unit_price", "last_update"]
+
+    def get_serializer_context(self):
+        return {"request": self.request}
+
+    # delete method for delete all list and one object also
+    def destroy(self, request, *args, **kwargs):  # delete one objects
+        if OrderItem.objects.filter(product_id=kwargs["pk"]).count():
+            return Response({"error": "Product cannot be deleted."})
+        return super().destroy(request, *args, **kwargs)
+"""
+
+# TODO pagination
+
+"http://localhost:8000/store/products/?page=2"
+
+
+class ProductViewSet(ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializers
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_class = ProductFilter
+    # pagination_class = PageNumberPagination
+    search_fields = ["^title", "description"]
+    ordering_fields = ["unit_price", "last_update"]
+
+    """REST_FRAMEWORK = {
+    "COERCE_DECIMAL_TO_STRING": False,
+    "PAGE_SIZE": 10,
+    }"""
+
+    # NOTE we can custom paginations
+    # create a pagination.py and import
+    from .pagination import DafaultPagination
+
+    pagination_class = DafaultPagination
 
     def get_serializer_context(self):
         return {"request": self.request}

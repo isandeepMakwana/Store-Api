@@ -295,3 +295,15 @@ set the app in installed app
 # Sorting
 
 [store-views.py](2-Advanced-rest-api-viewset/store/views.py)
+
+
+# Pagination
+[store-views.py](2-Advanced-rest-api-viewset/store/views.py)
+REST_FRAMEWORK = {
+    "COERCE_DECIMAL_TO_STRING": False,
+    "PAGE_SIZE": 10,
+}
+
+you can also add limit offset with this
+
+and you can create own paginations
