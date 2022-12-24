@@ -6,7 +6,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.filters import SearchFilter
+from rest_framework.filters import SearchFilter, OrderingFilter
 from .models import Product, Collection, OrderItem, Reviews
 from .filters import ProductFilter
 from .serializers import ProductSerializers, CollectionSerializers, ReviewsSerializers
@@ -154,7 +154,7 @@ class ReviewsViewSet(ModelViewSet):
 # '$' Regex search.
 
 
-class ProductViewSet(ModelViewSet):
+'''class ProductViewSet(ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializers
     filter_backends = [DjangoFilterBackend, SearchFilter]
@@ -180,6 +180,26 @@ class ProductViewSet(ModelViewSet):
         if OrderItem.objects.filter(product_id=kwargs["pk"]).count():
             return Response({"error": "Product cannot be deleted."})
         return super().destroy(request, *args, **kwargs)
-
+'''
 
 # TODO Sorting
+"http://localhost:8000/store/products/?ordering=unit_price"
+"http://localhost:8000/store/products/?ordering=-unit_price"
+
+
+class ProductViewSet(ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializers
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_class = ProductFilter
+    search_fields = ["^title", "description"]
+    ordering_fields = ["unit_price", "last_update"]
+
+    def get_serializer_context(self):
+        return {"request": self.request}
+
+    # delete method for delete all list and one object also
+    def destroy(self, request, *args, **kwargs):  # delete one objects
+        if OrderItem.objects.filter(product_id=kwargs["pk"]).count():
+            return Response({"error": "Product cannot be deleted."})
+        return super().destroy(request, *args, **kwargs)
