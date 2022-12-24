@@ -304,6 +304,16 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 10,
 }
 
-you can also add limit offset with this
+?\>> you can also add limit offset with this
+\> and you can create own paginations
 
-and you can create own paginations
+---
+
+# Designing a shopping Card API
+
+- creating a cart `post - /carts/` - {}
+- getting a cart `get - /carts/:id` -{}
+- deleting a cart `delete - /carts/:id` -{}
+- Adding an item `post - /carts/:id/items` - {prodId,qty} - item
+- Updating an item `patch -/carts/:id/items/:id` - {qty} - {qty}
+- deleting an item `delete -/carts/:id/items/:id` - {} - {}
