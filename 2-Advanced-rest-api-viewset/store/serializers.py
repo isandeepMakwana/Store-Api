@@ -33,6 +33,9 @@ class ProductSerializers(serializers.ModelSerializer):
 
 
 class ReviewsSerializers(serializers.ModelSerializer):
+
+    product = serializers.SerializerMethodField(method_name="get_product")
+
     class Meta:
         model = Reviews
         fields = [
@@ -42,3 +45,11 @@ class ReviewsSerializers(serializers.ModelSerializer):
             "description",
             "product",
         ]
+
+    def get_product(self, review):
+        return review.product_id
+
+    def create(self, validated_data):
+        product_id = self.context["product_id"]
+        # print("====>",product_id)
+        return Reviews.objects.create(product_id=product_id, **validated_data)

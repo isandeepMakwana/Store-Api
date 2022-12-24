@@ -266,3 +266,18 @@ pipenv install djangorestframework
 - [x] Serializer converts the product object to dict object
 
 - [x] rest_framework have a jsocnrenderer class and this class have to render a method accept a dict object and returns json object.
+
+
+install  django -nested- routs
+
+```bash
+pip install drf-nested-routers
+```
+
+install genric-filters
+[django filters]()
+```bash
+pip install django-filter
+```
+set the app in installed app
+===django_filters===,

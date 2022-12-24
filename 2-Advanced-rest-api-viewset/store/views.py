@@ -12,7 +12,7 @@ from django.shortcuts import get_object_or_404
 # TODO ViewSets
 
 # productList , productDetails in one class
-class ProductViewSet(ModelViewSet):
+"""class ProductViewSet(ModelViewSet):
     queryset = Product.objects.select_related("collection").all()
     serializer_class = ProductSerializers
 
@@ -23,7 +23,7 @@ class ProductViewSet(ModelViewSet):
     def destroy(self, request, *args, **kwargs):  # delete one objects
         if OrderItem.objects.filter(product_id=kwargs["pk"]).count():
             return Response({"error": "Product cannot be deleted."})
-        return super().destroy(request, *args, **kwargs)
+        return super().destroy(request, *args, **kwargs)"""
 
 
 class CollectionViewSet(ModelViewSet):
@@ -61,3 +61,43 @@ class CollectionViewSet(ModelViewSet):
 class ReviewsViewSet(ModelViewSet):
     queryset = Reviews.objects.all()
     serializer_class = ReviewsSerializers
+
+    def get_queryset(self):
+        return Reviews.objects.filter(product_id=self.kwargs["products_pk"])
+
+    def get_serializer_context(self):
+        return {"product_id": self.kwargs["products_pk"]}
+
+
+# TODO filtering
+
+"localhost:8000/store/products?collections_id=1"
+
+
+class ProductViewSet(ModelViewSet):
+    # queryset = Product.objects.select_related("collection").all()
+    serializer_class = ProductSerializers
+
+    def get_queryset(self):
+        queryset = Product.objects.all()
+        collection_id = self.request.query_params.get("collection_id")
+        # you can add more
+        if collection_id is not None:
+            queryset = queryset.filter(collection_id=collection_id).all()
+        return queryset
+
+    def get_serializer_context(self):
+        return {"request": self.request}
+
+    # delete method for delete all list and one object also
+    def destroy(self, request, *args, **kwargs):  # delete one objects
+        if OrderItem.objects.filter(product_id=kwargs["pk"]).count():
+            return Response({"error": "Product cannot be deleted."})
+        return super().destroy(request, *args, **kwargs)
+
+
+# TODO Genric Filtering
+# pip install django-filters
+# and inside of installed_app ['django_filters',....]
+
+
