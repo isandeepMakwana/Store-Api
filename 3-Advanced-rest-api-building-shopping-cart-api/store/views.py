@@ -16,6 +16,7 @@ from .serializers import (
     ReviewsSerializers,
     CartSerializer,
     CartItemSerializer,
+    AddCartItemSerializer,
 )
 
 
@@ -110,7 +111,7 @@ class CartViewSet(ModelViewSet):
 
 class CartItemViewSet(ModelViewSet):
     # queryset = CartItem.objects.all()
-    serializer_class = CartItemSerializer
+    # serializer_class = CartItemSerializer
 
     def get_queryset(self):
         return (
@@ -118,3 +119,11 @@ class CartItemViewSet(ModelViewSet):
             .select_related("product")
             .all()
         )
+
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return AddCartItemSerializer
+        return CartItemSerializer
+
+    def get_serializer_context(self):
+        return {"cart_id": self.kwargs["carts_pk"]}

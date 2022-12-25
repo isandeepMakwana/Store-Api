@@ -317,3 +317,7 @@ REST_FRAMEWORK = {
 - Adding an item `post - /carts/:id/items` - {prodId,qty} - item
 - Updating an item `patch -/carts/:id/items/:id` - {qty} - {qty}
 - deleting an item `delete -/carts/:id/items/:id` - {} - {}
+
+[source-files](3-Advanced-rest-api-building-shopping-cart-api/store/)
+
+
