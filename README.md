@@ -321,3 +321,26 @@ REST_FRAMEWORK = {
 [source-files](3-Advanced-rest-api-building-shopping-cart-api/store/)
 
 
+
+---
+
+# Django Authentication System
+
+- How the authentication system works
+- user model and customizing it
+- extending the user model
+- creating profiles
+- managing groups and permissions
+
+
+> see the auth_permission table in database
+
+<mark>customizing the userModel</mark>
+
+
+there is 2 way to customizing the user Model
+![customizing the user Model pic](docs/imgs/customizing_the_user_model.png)
+
+
+extending the user Model
+[4-django-authentication/core/models.py](4-django-authentication/core/models.py)
